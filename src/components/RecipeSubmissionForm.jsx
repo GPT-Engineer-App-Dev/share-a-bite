@@ -6,11 +6,12 @@ const RecipeSubmissionForm = ({ onSubmit }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [instructions, setInstructions] = useState("");
+  const [rating, setRating] = useState(0);
   const toast = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title || !imageUrl || !ingredients || !instructions) {
+    if (!title || !imageUrl || !ingredients || !instructions || !rating) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -20,11 +21,12 @@ const RecipeSubmissionForm = ({ onSubmit }) => {
       });
       return;
     }
-    onSubmit({ title, imageUrl, ingredients, instructions });
+    onSubmit({ title, imageUrl, ingredients, instructions, rating });
     setTitle("");
     setImageUrl("");
     setIngredients("");
     setInstructions("");
+    setRating(0);
     toast({
       title: "Recipe submitted",
       description: "Your recipe has been successfully added",
@@ -52,6 +54,17 @@ const RecipeSubmissionForm = ({ onSubmit }) => {
         <FormControl isRequired>
           <FormLabel>Instructions</FormLabel>
           <Textarea value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="Enter cooking instructions" />
+        </FormControl>
+        <FormControl isRequired>
+          <FormLabel>Rating</FormLabel>
+          <Input
+            type="number"
+            min="1"
+            max="5"
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+            placeholder="Rate from 1 to 5"
+          />
         </FormControl>
         <Button type="submit" colorScheme="teal">Submit Recipe</Button>
       </VStack>

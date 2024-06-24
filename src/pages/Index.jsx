@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Box, Container, Heading, Text, VStack, Input, Button, SimpleGrid, Image, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
-import { FaSearch, FaHeart } from "react-icons/fa";
+import { Box, Container, Heading, Text, VStack, Input, Button, SimpleGrid, Image, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useDisclosure, Flex } from "@chakra-ui/react";
+import { FaSearch, FaHeart, FaStar } from "react-icons/fa";
 import RecipeSubmissionForm from "../components/RecipeSubmissionForm";
 
 const Index = () => {
   const [recipes, setRecipes] = useState([
-    { id: 1, title: "Spaghetti Carbonara", image: "https://source.unsplash.com/random/300x200?pasta", likes: 15 },
-    { id: 2, title: "Chicken Stir Fry", image: "https://source.unsplash.com/random/300x200?stirfry", likes: 10 },
-    { id: 3, title: "Vegetable Curry", image: "https://source.unsplash.com/random/300x200?curry", likes: 8 },
+    { id: 1, title: "Spaghetti Carbonara", image: "https://source.unsplash.com/random/300x200?pasta", likes: 15, rating: 4.5 },
+    { id: 2, title: "Chicken Stir Fry", image: "https://source.unsplash.com/random/300x200?stirfry", likes: 10, rating: 4.0 },
+    { id: 3, title: "Vegetable Curry", image: "https://source.unsplash.com/random/300x200?curry", likes: 8, rating: 3.5 },
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,8 +33,14 @@ const Index = () => {
 
   const handleRecipeSubmit = (newRecipe) => {
     const id = recipes.length + 1;
-    setRecipes([...recipes, { ...newRecipe, id, likes: 0 }]);
+    setRecipes([...recipes, { ...newRecipe, id, likes: 0, rating: newRecipe.rating }]);
     onClose();
+  };
+
+  const handleRatingChange = (id, newRating) => {
+    setRecipes(recipes.map(recipe => 
+      recipe.id === id ? { ...recipe, rating: newRating } : recipe
+    ));
   };
 
   return (
@@ -65,6 +71,17 @@ const Index = () => {
                 <Heading as="h3" size="md" mb={2}>
                   {recipe.title}
                 </Heading>
+                <Flex alignItems="center" mb={2}>
+                  <Text mr={2}>Rating: {recipe.rating.toFixed(1)}</Text>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FaStar
+                      key={star}
+                      color={star <= recipe.rating ? "gold" : "gray.300"}
+                      cursor="pointer"
+                      onClick={() => handleRatingChange(recipe.id, star)}
+                    />
+                  ))}
+                </Flex>
                 <Button 
                   leftIcon={<FaHeart />} 
                   colorScheme="pink" 
