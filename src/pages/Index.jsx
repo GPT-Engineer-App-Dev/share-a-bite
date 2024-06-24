@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Box, Container, Heading, Text, VStack, Input, Button, SimpleGrid, Image, useToast } from "@chakra-ui/react";
+import { Box, Container, Heading, Text, VStack, Input, Button, SimpleGrid, Image, useToast, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
 import { FaSearch, FaHeart } from "react-icons/fa";
+import RecipeSubmissionForm from "../components/RecipeSubmissionForm";
 
 const Index = () => {
   const [recipes, setRecipes] = useState([
@@ -11,6 +12,7 @@ const Index = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleSearch = () => {
     // In a real app, this would filter recipes or make an API call
@@ -29,6 +31,12 @@ const Index = () => {
     ));
   };
 
+  const handleRecipeSubmit = (newRecipe) => {
+    const id = recipes.length + 1;
+    setRecipes([...recipes, { ...newRecipe, id, likes: 0 }]);
+    onClose();
+  };
+
   return (
     <Container maxW="container.xl" py={8}>
       <VStack spacing={8} align="stretch">
@@ -43,6 +51,9 @@ const Index = () => {
           />
           <Button leftIcon={<FaSearch />} colorScheme="teal" size="lg" ml={2} onClick={handleSearch}>
             Search
+          </Button>
+          <Button colorScheme="green" size="lg" onClick={onOpen} ml={2}>
+            Submit Recipe
           </Button>
         </Box>
 
@@ -67,6 +78,17 @@ const Index = () => {
           ))}
         </SimpleGrid>
       </VStack>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Submit a New Recipe</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <RecipeSubmissionForm onSubmit={handleRecipeSubmit} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };
